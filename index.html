@@ -2,163 +2,200 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Incognito Browser</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Incognito</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #121212; color: #e0e0e0;
-    height: 100vh; display: flex; flex-direction: column;
+    background: #121212; color: #fff; height: 100vh; height: 100dvh;
+    display: flex; flex-direction: column; overflow: hidden;
   }
-  .topbar {
-    background: #1e1e1e; padding: 12px; display: flex; gap: 8px;
-    align-items: center; border-bottom: 1px solid #333;
+  
+  /* Шапка браузера */
+  .header {
+    background: #1e1e1e; padding: 8px 10px; display: flex; gap: 8px;
+    align-items: center; border-bottom: 1px solid #333; flex-shrink: 0;
+    padding-top: max(8px, env(safe-area-inset-top)); /* Для iPhone с вырезом */
   }
-  .logo {
-    font-weight: bold; color: #a78bfa; font-size: 16px; margin-right: 8px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .input-group {
+  .input-box {
     flex: 1; display: flex; background: #2a2a2a; border-radius: 20px;
-    padding: 4px 12px; border: 1px solid #444;
+    padding: 4px 12px; border: 1px solid #444; align-items: center;
   }
-  .input-group:focus-within { border-color: #a78bfa; }
+  .input-box:focus-within { border-color: #a78bfa; }
   input {
     flex: 1; background: transparent; border: none; outline: none;
-    color: #fff; font-size: 15px; padding: 8px 0;
+    color: #fff; font-size: 16px; padding: 6px 0; width: 100%;
   }
   input::placeholder { color: #888; }
-  button {
-    background: #a78bfa; color: #000; border: none; border-radius: 16px;
-    padding: 0 16px; font-weight: bold; cursor: pointer; font-size: 14px;
+  .btn-go {
+    background: #a78bfa; color: #000; border: none; border-radius: 50%;
+    width: 36px; height: 36px; font-weight: bold; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
-  button:active { opacity: 0.8; }
+  .btn-go:active { opacity: 0.7; }
+  .btn-home {
+    background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 50%;
+    width: 36px; height: 36px; font-size: 18px; display: flex; 
+    align-items: center; justify-content: center; text-decoration: none;
+  }
+
+  /* Плашка инкогнито */
   .banner {
-    background: #2a2a2a; color: #a78bfa; font-size: 12px; padding: 8px 12px;
-    text-align: center; border-bottom: 1px solid #333;
+    background: #2a2a2a; color: #a78bfa; font-size: 11px; padding: 6px;
+    text-align: center; border-bottom: 1px solid #333; flex-shrink: 0;
   }
-  .content {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 20px; text-align: center;
+
+  /* Основная зона */
+  .main {
+    flex: 1; position: relative; background: #fff; display: flex; flex-direction: column;
   }
-  .eye {
-    width: 80px; height: 80px; background: linear-gradient(135deg, #a78bfa, #6d28d9);
-    border-radius: 50%; margin-bottom: 20px; position: relative;
-    box-shadow: 0 0 40px rgba(167, 139, 250, 0.3);
+  
+  /* Стартовая страница */
+  .start-screen {
+    position: absolute; inset: 0; background: #121212;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; text-align: center; z-index: 10; overflow-y: auto;
   }
-  .eye::after {
-    content: ''; position: absolute; width: 30px; height: 30px;
-    background: #121212; border-radius: 50%; top: 25px; left: 25px;
+  .start-screen.hidden { display: none; }
+  
+  .eye-icon {
+    width: 70px; height: 70px; background: linear-gradient(135deg, #a78bfa, #6d28d9);
+    border-radius: 50%; margin-bottom: 15px; position: relative;
+    box-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
   }
-  .eye::before {
-    content: ''; position: absolute; width: 10px; height: 10px;
-    background: #fff; border-radius: 50%; top: 32px; left: 32px; z-index: 2;
-  }
-  h1 { font-size: 24px; margin-bottom: 10px; color: #fff; }
-  p { font-size: 14px; color: #888; max-width: 400px; line-height: 1.5; margin-bottom: 20px; }
-  .links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .eye-icon::after { content: ''; position: absolute; width: 26px; height: 26px; background: #121212; border-radius: 50%; top: 22px; left: 22px; }
+  .eye-icon::before { content: ''; position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; top: 28px; left: 28px; z-index: 2; }
+  
+  h1 { font-size: 22px; margin-bottom: 8px; }
+  p { font-size: 13px; color: #888; max-width: 300px; line-height: 1.4; margin-bottom: 25px; }
+  
+  .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; margin-bottom: 25px; }
   .link-btn {
-    background: #2a2a2a; color: #ccc; padding: 10px 16px; border-radius: 12px;
-    text-decoration: none; font-size: 14px; border: 1px solid #444;
-    transition: 0.2s; display: inline-block;
+    background: #2a2a2a; color: #ddd; padding: 12px 10px; border-radius: 12px;
+    text-decoration: none; font-size: 13px; border: 1px solid #444;
+    text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer; transition: 0.2s;
   }
-  .link-btn:hover { background: #3a3a3a; border-color: #a78bfa; color: #fff; }
-  .clear-btn {
-    background: #ef4444; color: #fff; padding: 12px 24px; border-radius: 20px;
-    font-size: 15px; margin-top: 30px; cursor: pointer; border: none;
-    font-weight: bold; transition: 0.2s;
+  .link-btn:active { background: #3a3a3a; border-color: #a78bfa; }
+  
+  .wipe-btn {
+    background: #ef4444; color: #fff; padding: 12px 20px; border-radius: 20px;
+    font-size: 14px; font-weight: bold; border: none; cursor: pointer; width: 100%; max-width: 320px;
   }
-  .clear-btn:hover { background: #dc2626; }
-  .status {
-    margin-top: 15px; color: #22c55e; font-size: 13px; height: 20px;
-    opacity: 0; transition: opacity 0.3s;
+  .wipe-btn:active { background: #dc2626; }
+  
+  .status-msg { color: #22c55e; font-size: 12px; margin-top: 10px; height: 16px; opacity: 0; transition: 0.3s; }
+  .status-msg.show { opacity: 1; }
+
+  /* Iframe */
+  #frame {
+    width: 100%; height: 100%; border: none; display: none;
   }
-  .status.show { opacity: 1; }
+  #frame.active { display: block; }
 </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="logo">👁 Incognito</div>
-    <div class="input-group">
-      <input type="text" id="url" placeholder="Введите адрес или поисковый запрос..." autocomplete="off">
+  <!-- Шапка -->
+  <div class="header">
+    <a href="#" onclick="goHome(event)" class="btn-home">🏠</a>
+    <div class="input-box">
+      <input type="text" id="url" placeholder="Поиск или адрес..." autocomplete="off">
     </div>
-    <button onclick="go()">➜</button>
+    <button class="btn-go" onclick="go()">➜</button>
   </div>
 
+  <!-- Плашка -->
   <div class="banner">
-    🛡️ Режим инкогнито: история, куки и кэш не сохраняются
+    🛡️ Инкогнито: данные не сохраняются
   </div>
 
-  <div class="content">
-    <div class="eye"></div>
-    <h1>Безопасный просмотр</h1>
-    <p>Всё, что вы вводите здесь, исчезает при закрытии вкладки. Мы не используем базы данных и не сохраняем логи.</p>
+  <!-- Рабочая область -->
+  <div class="main">
     
-    <div class="links">
-      <a href="https://duckduckgo.com" target="_blank" rel="noopener noreferrer" class="link-btn">🦆 DuckDuckGo</a>
-      <a href="https://example.com" target="_blank" rel="noopener noreferrer" class="link-btn">🌐 Example</a>
-      <a href="https://ru.wikipedia.org" target="_blank" rel="noopener noreferrer" class="link-btn">📖 Wikipedia</a>
+    <!-- Стартовый экран -->
+    <div class="start-screen" id="startScreen">
+      <div class="eye-icon"></div>
+      <h1>Безопасный просмотр</h1>
+      <p>Всё, что вы делаете, исчезнет при закрытии. История и куки не сохраняются.</p>
+      
+      <div class="links-grid">
+        <div class="link-btn" onclick="navigate('https://duckduckgo.com')">🦆 Поиск</div>
+        <div class="link-btn" onclick="navigate('https://ru.wikipedia.org')">📖 Вики</div>
+        <div class="link-btn" onclick="navigate('https://example.com')">🌐 Example</div>
+        <div class="link-btn" onclick="navigate('https://w3.org')">📘 W3C</div>
+      </div>
+
+      <button class="wipe-btn" onclick="wipeData()">Очистить всё сейчас</button>
+      <div class="status-msg" id="status">✅ Данные очищены!</div>
     </div>
 
-    <button class="clear-btn" onclick="wipeData()">Очистить всё сейчас</button>
-    <div class="status" id="status">✅ Данные успешно очищены!</div>
+    <!-- Окно сайта -->
+    <iframe id="frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
   </div>
 
 <script>
-  // 1. Функция перехода (поиск или прямой URL)
-  function go() {
-    let input = document.getElementById('url').value.trim();
-    if (!input) return;
+  const frame = document.getElementById('frame');
+  const startScreen = document.getElementById('startScreen');
+  const urlInput = document.getElementById('url');
 
-    // Если это не похоже на URL, ищем в DuckDuckGo (он не сохраняет историю)
-    if (!input.includes('.') || input.includes(' ')) {
-      input = 'https://duckduckgo.com/?q=' + encodeURIComponent(input);
-    } else if (!input.startsWith('http')) {
-      input = 'https://' + input;
+  // Функция перехода
+  function navigate(url) {
+    if (!url.includes('.')) {
+      // Если это поисковый запрос
+      url = 'https://duckduckgo.com/?q=' + encodeURIComponent(url);
+    } else if (!url.startsWith('http')) {
+      url = 'https://' + url;
     }
 
-    // Открываем в новой вкладке
-    window.open(input, '_blank', 'noopener,noreferrer');
+    // Скрываем стартовый экран, показываем сайт
+    startScreen.classList.add('hidden');
+    frame.classList.add('active');
+    frame.src = url;
     
-    // Очищаем строку после перехода (чтобы не осталось в памяти)
-    document.getElementById('url').value = '';
+    // Очищаем инпут, чтобы не оставалось в памяти
+    urlInput.value = '';
   }
 
-  // 2. Обработка нажатия Enter
-  document.getElementById('url').addEventListener('keypress', function(e) {
+  function go() {
+    const val = urlInput.value.trim();
+    if (val) navigate(val);
+  }
+
+  // Обработка Enter
+  urlInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') go();
   });
 
-  // 3. Полная очистка данных (LocalStorage, SessionStorage, Cookies)
+  // Вернуться на главную
+  function goHome(e) {
+    e.preventDefault();
+    frame.src = 'about:blank';
+    frame.classList.remove('active');
+    startScreen.classList.remove('hidden');
+    urlInput.value = '';
+  }
+
+  // Очистка всех данных
   function wipeData() {
-    // Очистка хранилищ
     localStorage.clear();
     sessionStorage.clear();
-
-    // Очистка куки (удаляем всё, что принадлежит текущему домену)
+    
+    // Удаление куки
     document.cookie.split(";").forEach(function(c) { 
       document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
     });
 
-    // Очистка поля ввода
-    document.getElementById('url').value = '';
+    // Сброс браузера
+    goHome({ preventDefault: () => {} });
 
-    // Показать сообщение об успехе
     const status = document.getElementById('status');
     status.classList.add('show');
-    setTimeout(() => status.classList.remove('show'), 3000);
+    setTimeout(() => status.classList.remove('show'), 2000);
   }
 
-  // 4. Автоматическая очистка при уходе со страницы/закрытии
-  window.addEventListener('beforeunload', function() {
-    localStorage.clear();
-    sessionStorage.clear();
-  });
-
-  // Дополнительная страховка
-  window.addEventListener('pagehide', function() {
+  // Автоочистка при закрытии
+  window.addEventListener('beforeunload', () => {
     localStorage.clear();
     sessionStorage.clear();
   });
